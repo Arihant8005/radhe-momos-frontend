@@ -11,7 +11,7 @@ function App() {
   const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/menu')
+    fetch('https://radhe-momos-backend.onrender.com/api/menu')
       .then(response => response.json())
       .then(data => setMenuItems(data))
       .catch(error => console.error("Error fetching menu:", error));
