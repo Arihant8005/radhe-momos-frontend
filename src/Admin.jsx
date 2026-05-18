@@ -12,7 +12,7 @@ function Admin({ goBack }) {
 
   // 🚨 CLOUD UPDATE: Points to your live Render server
   const fetchOrders = useCallback(() => {
-    fetch('https://radhe-momos-backend.onrender.com/api/orders', { 
+    fetch(`${import.meta.env.VITE_API_URL}/api/orders`, { 
       headers: { 'Authorization': `Bearer ${token}` } 
     })
       .then(res => res.ok ? res.json() : Promise.reject('Unauthorized'))
@@ -22,7 +22,7 @@ function Admin({ goBack }) {
 
   // 🚨 CLOUD UPDATE: Points to your live Render server
   const fetchMenu = useCallback(() => {
-    fetch('https://radhe-momos-backend.onrender.com/api/menu')
+    fetch(`${import.meta.env.VITE_API_URL}/api/menu`)
       .then(res => res.json())
       .then(data => setMenuItems(data));
   }, []);
@@ -45,7 +45,7 @@ function Admin({ goBack }) {
 
     try {
       // 🚨 CLOUD UPDATE: Points to your live Render server
-      const response = await fetch('https://radhe-momos-backend.onrender.com/api/menu', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/menu`, {
         method: 'POST',
         headers: { 
           'Authorization': `Bearer ${token}` 
@@ -69,7 +69,7 @@ function Admin({ goBack }) {
     if (!window.confirm("Are you sure you want to delete this item?")) return;
     try {
       // 🚨 CLOUD UPDATE: Points to your live Render server
-      const response = await fetch(`https://radhe-momos-backend.onrender.com/api/menu/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/menu/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
