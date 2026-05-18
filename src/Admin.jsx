@@ -10,6 +10,30 @@ function Admin({ goBack }) {
 
   const token = localStorage.getItem('adminToken');
 
+const handleCompleteOrder = async (orderId) => {
+    // 1. Ask the chef to confirm so they don't accidentally click it!
+    if (!window.confirm("Is this order fully cooked and delivered?")) return;
+
+    try {
+      const token = localStorage.getItem('token'); // Grab the security key
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/${orderId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        // 2. Magically remove the order from the screen without refreshing the page!
+        setOrders(prevOrders => prevOrders.filter(order => order._id !== orderId));
+      } else {
+        alert("Something went wrong trying to complete the order.");
+      }
+    } catch (error) {
+      alert("Server error. Could not complete order.");
+    }
+  };
+
   // 🚨 CLOUD UPDATE: Points to your live Render server
   const fetchOrders = useCallback(() => {
     fetch(`${import.meta.env.VITE_API_URL}/api/orders`, { 
@@ -105,22 +129,33 @@ function Admin({ goBack }) {
 
       {activeTab === 'orders' && (
         <div className="grid gap-6">
-          {orders.length === 0 ? <p className="text-xl text-gray-500">No orders yet.</p> : (
-            orders.map(order => (
-              <div key={order._id} className="bg-white p-6 rounded-xl shadow-md border-l-4 border-red-500">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-xl font-bold">{order.customerName}</h3>
-                    <p className="text-gray-600">📞 {order.phoneNumber}</p>
-                    <p className="text-gray-600">📍 {order.deliveryAddress}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-2xl font-bold text-gray-800">₹{order.totalPrice}</p>
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
+          {orders.length === 0 ? (
+  <p className="text-xl text-gray-500">No orders yet.</p>
+) : (
+  orders.map(order => (
+    <div key={order._id} className="bg-white p-6 rounded-xl shadow-md border-l-4 border-red-500 mb-4">
+      
+      <div className="flex justify-between items-start mb-4">
+        <div>
+          <h3 className="text-xl font-bold">{order.customerName}</h3>
+          <p className="text-gray-600">📞 {order.phoneNumber}</p>
+          <p className="text-gray-600">📍 {order.deliveryAddress}</p>
+        </div>
+        <div className="text-right">
+          <p className="text-2xl font-bold text-gray-800">₹{order.totalPrice}</p>
+        </div>
+      </div>
+
+      <button 
+        onClick={() => handleCompleteOrder(order._id)}
+        className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+      >
+        ✅ Mark as Completed
+      </button>
+
+    </div>
+  ))
+)}
         </div>
       )}
 
