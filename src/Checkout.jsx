@@ -16,7 +16,8 @@ function Checkout({ cart, totalPrice, goBack, clearCart, removeFromCart }) {
       customerName: name,
       phoneNumber: phone,
       deliveryAddress: address,
-      items: cart.map(item => ({ name: item.name, price: item.price })),
+      items: cart.map(item => ({ menuItem: item._id, 
+        quantity: 1 })),
       totalPrice: totalPrice
     };
 
