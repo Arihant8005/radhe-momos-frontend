@@ -5,21 +5,24 @@ function Admin({ goBack }) {
   const [menuItems, setMenuItems] = useState([]);
   const [activeTab, setActiveTab] = useState('orders');
   
-  // Notice we removed imageUrl and added imageFile
   const [newItem, setNewItem] = useState({ name: '', description: '', price: '' });
   const [imageFile, setImageFile] = useState(null);
 
   const token = localStorage.getItem('adminToken');
 
+  // 🚨 CLOUD UPDATE: Points to your live Render server
   const fetchOrders = useCallback(() => {
-    fetch('http://localhost:5000/api/orders', { headers: { 'Authorization': `Bearer ${token}` } })
+    fetch('https://radhe-momos-backend.onrender.com/api/orders', { 
+      headers: { 'Authorization': `Bearer ${token}` } 
+    })
       .then(res => res.ok ? res.json() : Promise.reject('Unauthorized'))
       .then(data => setOrders(data))
       .catch(() => { alert("Session expired."); goBack(); });
   }, [token, goBack]);
 
+  // 🚨 CLOUD UPDATE: Points to your live Render server
   const fetchMenu = useCallback(() => {
-    fetch('http://localhost:5000/api/menu')
+    fetch('https://radhe-momos-backend.onrender.com/api/menu')
       .then(res => res.json())
       .then(data => setMenuItems(data));
   }, []);
@@ -32,7 +35,6 @@ function Admin({ goBack }) {
   const handleAddItem = async (e) => {
     e.preventDefault();
     
-    // We use FormData instead of JSON to securely bundle the image file with the text
     const formData = new FormData();
     formData.append('name', newItem.name);
     formData.append('description', newItem.description);
@@ -42,12 +44,11 @@ function Admin({ goBack }) {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/menu', {
+      // 🚨 CLOUD UPDATE: Points to your live Render server
+      const response = await fetch('https://radhe-momos-backend.onrender.com/api/menu', {
         method: 'POST',
         headers: { 
           'Authorization': `Bearer ${token}` 
-          // Notice we DO NOT put 'Content-Type': 'application/json' here. 
-          // The browser automatically sets the correct format for file uploads!
         },
         body: formData
       });
@@ -55,8 +56,7 @@ function Admin({ goBack }) {
       if (response.ok) {
         alert("✅ Item added successfully!");
         setNewItem({ name: '', description: '', price: '' });
-        setImageFile(null); // Clear the file
-        // Reset the actual file input visually
+        setImageFile(null); 
         document.getElementById('imageUpload').value = '';
         fetchMenu(); 
       }
@@ -68,7 +68,8 @@ function Admin({ goBack }) {
   const handleDeleteItem = async (id) => {
     if (!window.confirm("Are you sure you want to delete this item?")) return;
     try {
-      const response = await fetch(`http://localhost:5000/api/menu/${id}`, {
+      // 🚨 CLOUD UPDATE: Points to your live Render server
+      const response = await fetch(`https://radhe-momos-backend.onrender.com/api/menu/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -136,7 +137,6 @@ function Admin({ goBack }) {
               <input type="number" placeholder="Price (₹)" required className="border p-2 rounded"
                 value={newItem.price} onChange={e => setNewItem({...newItem, price: e.target.value})} />
               
-              {/* THIS IS THE NEW FILE UPLOAD BUTTON */}
               <div className="border p-2 rounded bg-gray-50">
                 <label className="block text-sm font-bold text-gray-700 mb-1">Upload Image:</label>
                 <input 
