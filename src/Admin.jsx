@@ -15,7 +15,7 @@ const handleCompleteOrder = async (orderId) => {
     if (!window.confirm("Is this order fully cooked and delivered?")) return;
 
     try {
-      const token = localStorage.getItem('token'); // Grab the security key
+      const token = localStorage.getItem('adminToken'); // Grab the security key
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/${orderId}`, {
         method: 'DELETE',
         headers: {
