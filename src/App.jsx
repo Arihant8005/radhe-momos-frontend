@@ -4,7 +4,7 @@ import Checkout from './Checkout';
 import Admin from './Admin';
 import Login from './Login';
 
-const socket = io('http://localhost:5000');
+const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000');
 
 function App() {
   const [menuItems, setMenuItems] = useState([]);
