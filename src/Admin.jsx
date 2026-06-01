@@ -34,6 +34,34 @@ const handleCompleteOrder = async (orderId) => {
     }
   };
 
+  // 👇 PASTE THIS NEW FUNCTION RIGHT HERE 👇
+  const updateOrderStatus = async (orderId, newStatus) => {
+    try {
+      // 🚨 Notice we are using your exact token name: 'adminToken'
+      const token = localStorage.getItem('adminToken'); 
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/status/${orderId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      if (!response.ok) throw new Error('Failed to update status');
+      setOrders((prevOrders) => 
+        prevOrders.map((order) => 
+          order._id === orderId ? { ...order, status: newStatus } : order
+        )
+      );
+      // Socket.io will automatically trigger the UI update!
+    } catch (error) {
+      console.error("Error updating status:", error);
+      alert("Failed to update order status.");
+    }
+  };
+  // 👆 END NEW FUNCTION 👆
+
   // 🚨 CLOUD UPDATE: Points to your live Render server
   const fetchOrders = useCallback(() => {
     fetch(`${import.meta.env.VITE_API_URL}/api/orders`, { 
@@ -140,6 +168,12 @@ const handleCompleteOrder = async (orderId) => {
           <h3 className="text-xl font-bold">{order.customerName}</h3>
           <p className="text-gray-600">📞 {order.phoneNumber}</p>
           <p className="text-gray-600">📍 {order.deliveryAddress}</p>
+          <div className="mt-2">
+            <span className="font-bold text-gray-700">Status: </span>
+            <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded font-bold text-sm">
+              {order.status || 'Pending'}
+            </span>
+          </div>
         </div>
         <div className="text-right">
           <p className="text-2xl font-bold text-gray-800">₹{order.totalPrice}</p>
@@ -152,6 +186,19 @@ const handleCompleteOrder = async (orderId) => {
       >
         ✅ Mark as Completed
       </button>
+      <button 
+              onClick={() => updateOrderStatus(order._id, 'Cooking')}
+              className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+            >
+              👨‍🍳 Cooking
+            </button>
+            
+            <button 
+              onClick={() => updateOrderStatus(order._id, 'Out for Delivery')}
+              className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+            >
+              🛵 Delivery
+            </button>
 
     </div>
   ))

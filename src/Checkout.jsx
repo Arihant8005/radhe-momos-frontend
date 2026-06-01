@@ -6,6 +6,7 @@ function Checkout({ cart, totalPrice, goBack, clearCart, removeFromCart }) {
   const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [isLocating, setIsLocating] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,6 +40,43 @@ function Checkout({ cart, totalPrice, goBack, clearCart, removeFromCart }) {
     } finally {
       setLoading(false);
     }
+  };
+  const handleGetLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Your browser doesn't support geolocation.");
+      return;
+    }
+
+    setIsLocating(true);
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+          );
+          const data = await response.json();
+
+          if (data && data.display_name) {
+            setAddress(data.display_name); // Updates your 'address' state!
+          } else {
+            alert("Could not find a street address.");
+          }
+        } catch (error) {
+          console.error("Error fetching address:", error);
+          alert("Failed to translate your location.");
+        } finally {
+          setIsLocating(false);
+        }
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        alert("Please allow location permissions to use this feature.");
+        setIsLocating(false);
+      }
+    );
   };
 
   if (success) {
@@ -116,14 +154,26 @@ function Checkout({ cart, totalPrice, goBack, clearCart, removeFromCart }) {
             value={phone} 
             onChange={e => setPhone(e.target.value)} 
           />
+          <div className="flex flex-col gap-2">
+          
+          <button
+            type="button" // Important: Prevents the button from submitting the form!
+            onClick={handleGetLocation}
+            disabled={isLocating}
+            className="bg-blue-100 text-blue-700 px-3 py-2 rounded font-semibold w-fit hover:bg-blue-200"
+          >
+            {isLocating ? '⏳ Locating...' : '📍 Auto-fill my location'}
+          </button>
+
           <textarea 
-            placeholder="Complete Delivery Address" 
-            required 
-            rows="3" 
-            className="border p-3 rounded-lg focus:ring-2 focus:ring-red-500 outline-none transition"
+            placeholder="Delivery Address" 
             value={address} 
-            onChange={e => setAddress(e.target.value)} 
+            onChange={(e) => setAddress(e.target.value)} 
+            required 
+            rows="3"
+            className="border p-2 rounded w-full"
           />
+        </div>
           <button 
             type="submit" 
             disabled={loading || cart.length === 0} 

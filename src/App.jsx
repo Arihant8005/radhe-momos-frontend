@@ -1,7 +1,10 @@
+import { io } from 'socket.io-client';
 import { useState, useEffect } from 'react';
 import Checkout from './Checkout';
 import Admin from './Admin';
 import Login from './Login';
+
+const socket = io('http://localhost:5000');
 
 function App() {
   const [menuItems, setMenuItems] = useState([]);
@@ -9,6 +12,18 @@ function App() {
   const [showCheckout, setShowCheckout] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+
+// 👇 ADD THIS NEW USEEFFECT BLOCK HERE 👇
+  useEffect(() => {
+    socket.on('connect', () => {
+      console.log('✅ Connected to the real-time server with ID:', socket.id);
+    });
+
+    // Clean up the connection if the component unmounts
+    return () => {
+      socket.off('connect');
+    };
+  }, []);
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/api/menu`)
