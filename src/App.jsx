@@ -13,15 +13,32 @@ function App() {
   const [showAdmin, setShowAdmin] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
 
+const [myActiveOrder, setMyActiveOrder] = useState(() => {
+    const saved = localStorage.getItem('myActiveOrder');
+    return saved ? JSON.parse(saved) : null;
+  });
 // 👇 ADD THIS NEW USEEFFECT BLOCK HERE 👇
   useEffect(() => {
     socket.on('connect', () => {
       console.log('✅ Connected to the real-time server with ID:', socket.id);
     });
 
+    socket.on('orderStatusUpdated', (updatedOrder) => {
+      console.log('🚨 Live update:', updatedOrder);
+      
+      setMyActiveOrder((prev) => {
+        if (prev && prev._id === updatedOrder._id) {
+          localStorage.setItem('myActiveOrder', JSON.stringify(updatedOrder));
+          return updatedOrder;
+        }
+        return prev;
+      });
+    });
+
     // Clean up the connection if the component unmounts
     return () => {
       socket.off('connect');
+      socket.off('orderStatusUpdated');
     };
   }, []);
 
@@ -60,6 +77,30 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-10 relative">
+      {myActiveOrder && (
+        <div className="bg-indigo-600 text-white p-4 shadow-lg flex justify-between items-center sticky top-0 z-50">
+          <div>
+            <p className="text-sm text-indigo-200 uppercase tracking-wide font-bold">Live Order Tracking</p>
+            <h3 className="font-bold text-lg">
+              Status: <span className="bg-white text-indigo-700 px-2 py-1 rounded text-sm ml-2">
+                {myActiveOrder.status || 'Pending'}
+              </span>
+            </h3>
+          </div>
+          
+          {myActiveOrder.status === 'Delivered' && (
+            <button 
+              onClick={() => {
+                localStorage.removeItem('myActiveOrder');
+                setMyActiveOrder(null);
+              }}
+              className="bg-indigo-800 px-3 py-2 rounded text-sm hover:bg-indigo-900 transition-colors"
+            >
+              Close
+            </button>
+          )}
+        </div>
+      )}
       <header className="bg-red-600 text-white p-6 shadow-md sticky top-0 z-10">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <h1 className="text-3xl font-bold cursor-pointer" onClick={() => setShowCheckout(false)}>🥟 Radhe Momos</h1>

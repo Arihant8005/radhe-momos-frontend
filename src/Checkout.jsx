@@ -30,6 +30,10 @@ function Checkout({ cart, totalPrice, goBack, clearCart, removeFromCart }) {
       });
 
       if (response.ok) {
+        const data = await response.json(); 
+        
+        // Save this specific order to the browser's memory!
+        localStorage.setItem('myActiveOrder', JSON.stringify(data.order));
         setSuccess(true);
         clearCart(); // Wipe the cart data completely upon successful order/payment simulation
       } else {
