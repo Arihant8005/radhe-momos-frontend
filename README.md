@@ -15,3 +15,5 @@ This is a custom, real-time food ordering platform built from the ground up for 
 * **Database:** MongoDB (with Mongoose schemas)
 * **Real-Time Infrastructure:** Socket.io
 * **Hosting:** Vercel (Frontend) & Render (Backend)
+## 🔗 Related Repositories
+* **Backend API & Database:** [Click here to view the Backend Code]()
