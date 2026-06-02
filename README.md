@@ -1,16 +1,17 @@
-# React + Vite
+# 🥟 Radhe Momos - Full Stack Restaurant Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Live Application:** 
 
-Currently, two official plugins are available:
+This is a custom, real-time food ordering platform built from the ground up for a local restaurant. It replaces third-party apps like Swiggy by allowing the restaurant to take orders and update customers directly.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Key Features
+* **Real-Time Order Tracking:** Customers watch their order status update instantly (Pending -> Cooking -> Delivered) without refreshing the page, powered by WebSockets.
+* **Smart Auto-Fill:** Integrated the browser's Geolocation API to instantly translate user GPS coordinates into a physical street address at checkout.
+* **Secure Admin Dashboard:** A protected management portal where the restaurant owner can track active orders, update statuses, and clear completed tickets.
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🛠️ The Tech Stack
+* **Frontend:** React.js, Tailwind CSS, Vite
+* **Backend:** Node.js, Express.js *(Backend code located in a separate repository)*
+* **Database:** MongoDB (with Mongoose schemas)
+* **Real-Time Infrastructure:** Socket.io
+* **Hosting:** Vercel (Frontend) & Render (Backend)
