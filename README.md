@@ -1,6 +1,6 @@
 # 🥟 Radhe Momos - Full Stack Restaurant Platform
 
-**Live Application:** 
+**Live Application:** [https://radhe-momos-frontend.vercel.app/]
 
 This is a custom, real-time food ordering platform built from the ground up for a local restaurant. It replaces third-party apps like Swiggy by allowing the restaurant to take orders and update customers directly.
 
